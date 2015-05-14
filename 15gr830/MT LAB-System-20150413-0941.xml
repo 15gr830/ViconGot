@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<GTmonitor System="ModelTrain" Version="1.0">
+  <System>
+    <Name>MT LAB</Name>
+    <SpeedRange>CMS</SpeedRange>
+    <Gauge>87</Gauge>
+    <FrequencyMS>100</FrequencyMS>
+    <Comment>
+      <l>Setup til AAU MT lab</l>
+    </Comment>
+  </System>
+  <Naming/>
+  <Loks>
+    <Lok>
+      <Address>0</Address>
+      <PosPriority>0</PosPriority>
+      <FrontTxMM>0</FrontTxMM>
+      <BackTxMM>0</BackTxMM>
+    </Lok>
+  </Loks>
+  <Devices>
+    <Device/>
+  </Devices>
+  <Tunnels/>
+  <Blocks>
+    <Block>
+      <Module>0</Module>
+      <Port/>
+    </Block>
+  </Blocks>
+  <Routes/>
+  <Automation/>
+  <Position>
+    <ComPort>Auto</ComPort>
+    <MinLevel>0</MinLevel>
+    <MaxReceiverDistance>10000</MaxReceiverDistance>
+    <Scenarios/>
+  </Position>
+  <Speech>
+    <StopCommand>Stop all</StopCommand>
+  </Speech>
+</GTmonitor>
