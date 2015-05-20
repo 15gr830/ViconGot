@@ -1,6 +1,6 @@
 clear all; close all; clc
 %% Setup TCP port and UDP
-system('C:\Users\proces\Desktop\GOTSDK\GOTSDKSample\bin\Debug\Run.bat')
+system('C:\Users\proces\Documents\github\ViconGot\15gr830\GOTSDK\GOTSDKSample\bin\Debug\Run.bat')
 port=4242
 t=tcpip('localhost', port, 'NetworkRole', 'client');
 fopen(t);
@@ -65,7 +65,7 @@ while 1
         A(n,p)=1*str2double(B);
         p=p+1;
     end
-    A(n,3)=A(n,3)+983; % calbration of z in got
+    A(n,3)=A(n,3);%+983; % calbration of z in got
     Mes=[A(n,(1:3)), pos(1,i),pos(2,i),pos(3,i),ATT(1,i),ATT(2,i),ATT(3,i),ATT(4,i)];
     fwrite(u,Mes,'double')
     n=n+1;

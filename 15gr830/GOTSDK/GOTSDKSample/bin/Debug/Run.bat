@@ -1,0 +1,1 @@
+start C:\Users\proces\Documents\github\ViconGot\15gr830\GOTSDK\GOTSDKSample\bin\Debug\GOTSDKSample.exe
