@@ -55,6 +55,8 @@ namespace GOTSDKSample
         public int Px = 0;
         public int Py = 0;
         public int Pz = 0;
+        public int Dx = 0, Dy = 0, Dz = 0, Dc=0;
+        public int Nx  = 0, Ny = 0, Nz = 0;
 
 
 
@@ -323,23 +325,52 @@ namespace GOTSDKSample
                                 Py = (int)pos.Position.Y;
                                 Pz = (int)pos.Position.Z;
                                 T = 1;
-                                try
+                                if ((((Px - Dx) * (Px - Dx)) + ((Py - Dy)*(Py - Dy)) + ((Pz - Dz)*(Pz - Dz))) < 200*200)
                                 {
+                                    Dx = Px;
+                                    Dy = Py;
+                                    Dz = Pz;
+                                    try
+                                    {
 
-                                    byte[] bytePos = Encoding.ASCII.GetBytes("x\n" + Px + "\n");
-                                    ns.Write(bytePos, 0, bytePos.Length);
-                                    bytePos = Encoding.ASCII.GetBytes("y\n" + Py + "\n");
-                                    ns.Write(bytePos, 0, bytePos.Length);
-                                    bytePos = Encoding.ASCII.GetBytes("z\n" + Pz + "\n");
-                                    ns.Write(bytePos, 0, bytePos.Length);
-                                    Console.WriteLine("Sent"); 
+                                        byte[] bytePos = Encoding.ASCII.GetBytes("x\n" + Px + "\n");
+                                        ns.Write(bytePos, 0, bytePos.Length);
+                                        bytePos = Encoding.ASCII.GetBytes("y\n" + Py + "\n");
+                                        ns.Write(bytePos, 0, bytePos.Length);
+                                        bytePos = Encoding.ASCII.GetBytes("z\n" + Pz + "\n");
+                                        ns.Write(bytePos, 0, bytePos.Length);
+                                        Console.WriteLine("Sent");
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine("Can not send");
+                                    }
+                                    //bytesSent = Encoding.ASCII.GetBytes(string.Format("{0}: {1},{2},{3}", timeStamp, (int)pos.Position.X, (int)pos.Position.Y, (int)pos.Position.Z));
+                                    //STREAM.Write(bytesSent, 0, bytesSent.Length);
                                 }
-                                catch (Exception e)
+                                else
                                 {
-                                    Console.WriteLine("Can not send");
+                                    byte[] bytePos = Encoding.ASCII.GetBytes("F\n");
+                                    ns.Write(bytePos, 0, bytePos.Length);
+                                    if ((((Nx - Px) * (Nx - Px)) + ((Ny - Py) * (Ny - Py)) + ((Nz - Pz) * (Nz - Pz))) < 200 * 200)
+                                    {
+                                        Dc++;
+                                        if (Dc == 2)
+                                        {
+                                            Dx = Px;
+                                            Dy = Py;
+                                            Dz = Pz;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Nx = Px;
+                                        Ny = Py;
+                                        Nz = Pz;
+                                        Dc = 0;
+                                    }
+
                                 }
-                                //bytesSent = Encoding.ASCII.GetBytes(string.Format("{0}: {1},{2},{3}", timeStamp, (int)pos.Position.X, (int)pos.Position.Y, (int)pos.Position.Z));
-                                //STREAM.Write(bytesSent, 0, bytesSent.Length);
                             }
                         }
                     }
@@ -355,9 +386,12 @@ namespace GOTSDKSample
                                 Py = 0;
                                 Pz = 0;
                                 T = 1; */
+                                /*
                                 try
                                 {
                                     byte[] bytePos = Encoding.ASCII.GetBytes("x\n" + Px + "\n");
+                                    ns.Write(bytePos, 0, bytePos.Length);
+                                    bytePos = Encoding.ASCII.GetBytes("F\n");
                                     ns.Write(bytePos, 0, bytePos.Length);
                                     bytePos = Encoding.ASCII.GetBytes("y\n" + Py + "\n");
                                     ns.Write(bytePos, 0, bytePos.Length);
@@ -367,7 +401,7 @@ namespace GOTSDKSample
                                 catch (Exception e)
                                 {
                                     Console.WriteLine("Can not send");
-                                }
+                                } */
 
                             }
                         }

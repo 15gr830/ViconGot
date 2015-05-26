@@ -8,7 +8,7 @@ host='172.26.56.142'; %router
 Port=1212;
 u=udp(host,Port);
 fopen(u); 
-
+    
 %% setup and Init Vicon
 TransmitMulticast = false;
 % Load the SDK
@@ -37,16 +37,16 @@ MyClient.SetAxisMapping( Direction.Forward, ...
 
 %% While loop, stop with ctrl + c
 n=1; p=1; i=1;
-A(n,:)=fread(t)
-pause(8)
-tic
-n=n+1;
+c=fread(t);
+%pause(8)
+start=tic;
+A= zeros(1,4); F(1)=0;
 while 1
     if MyClient.GetFrame().Result.Value == Result.Success
         Output_GetFrameNumber = MyClient.GetFrameNumber();
         Output_GetTimecode = MyClient.GetTimecode();
         
-        Output_GetSegmentGlobalTranslation = MyClient.GetSegmentGlobalTranslation( 'Gr839', 'Gr839' );
+        Output_GetSegmentGlobalTranslation = MyClient.GetSegmentGlobalTranslation( '15GR830', '15GR830' );
         pos(1,i)=Output_GetSegmentGlobalTranslation.Translation( 1 );
         pos(2,i)=Output_GetSegmentGlobalTranslation.Translation( 2 );
         pos(3,i)=Output_GetSegmentGlobalTranslation.Translation( 3 );
@@ -54,20 +54,45 @@ while 1
         pos(4,i)=c(4);
         pos(5,i)=c(5);
         pos(6,i)=c(6);
-        AT = MyClient.GetSegmentGlobalRotationQuaternion( 'Gr839', 'Gr839' );
+        AT = MyClient.GetSegmentGlobalRotationQuaternion( '15GR830', '15GR830' );
         ATT(:,i)=AT.Rotation;
         
     end
     
     p=1;
-    while p<4
-        B=fscanf(t,'%c');
-        A(n,p)=1*str2double(B);
-        p=p+1;
+    while p<20
+        try
+        B=fscanf(t,'%c');        
+        if B(1) == 'x'
+            B=fscanf(t,'%c');
+            A(n,1)=1*str2double(B);
+        elseif B(1) == 'y'
+            B=fscanf(t,'%c');
+            A(n,2)=1*str2double(B);
+        elseif B(1) == 'z'
+            B=fscanf(t,'%c');
+            A(n,3)=1*str2double(B);
+            A(n,4)=toc(start);
+            start=tic;
+            F(n)=0;
+            p=40;
+            
+        elseif B(1) == 'F'
+            F(n)=1;
+            p=30;
+            A(n,(1:3))=A(n-1,(1:3));
+        end
+        catch me
+            disp('derp')
+            p=30;
+        end
+        
     end
-    A(n,3)=A(n,3);%+983; % calbration of z in got
+    %A(n,3)=A(n,3);%+983; % calbration of z in got
     Mes=[A(n,(1:3)), pos(1,i),pos(2,i),pos(3,i),ATT(1,i),ATT(2,i),ATT(3,i),ATT(4,i)];
-    fwrite(u,Mes,'double')
+    if p == 40
+        fwrite(u,Mes,'double')
+    end
     n=n+1;
     i=i+1;
     
@@ -78,3 +103,9 @@ end
 plot3(A(:,1),A(:,2),A(:,3))
 hold on
 plot3(pos(1,:),pos(2,:),pos(3,:),'g')
+%%
+plot(A(:,1))
+hold on
+plot(pos(1,:),'k')
+plot(F*-500,'k')
+plot((A(:,4)*1000)+300,'r')

@@ -8,7 +8,7 @@ host='172.26.56.142'; %router
 Port=1212;
 u=udp(host,Port);
 fopen(u); 
-
+    
 %% setup and Init Vicon
 TransmitMulticast = false;
 % Load the SDK
@@ -39,8 +39,8 @@ MyClient.SetAxisMapping( Direction.Forward, ...
 n=1; p=1; i=1;
 c=fread(t);
 %pause(8)
-tic
-A= zeros(1,3);
+start=tic;
+A= zeros(1,4);
 while 1
     if MyClient.GetFrame().Result.Value == Result.Success
         Output_GetFrameNumber = MyClient.GetFrameNumber();
@@ -71,6 +71,8 @@ while 1
         elseif B(1) == 'z'
             B=fscanf(t,'%c');
             A(n,3)=1*str2double(B);
+            A(n,4)=toc(start);
+            start=tic;
             p=3;
         end
     end
