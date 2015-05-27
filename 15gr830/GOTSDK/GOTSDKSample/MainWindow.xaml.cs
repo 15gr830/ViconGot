@@ -54,9 +54,9 @@ namespace GOTSDKSample
         public int T = 1; public int TL = 0;
         public int Px = 0;
         public int Py = 0;
-        public int Pz = 0;
-        public int Dx = 0, Dy = 0, Dz = 0, Dc=0;
-        public int Nx  = 0, Ny = 0, Nz = 0;
+        public int Pz = 20;
+        public int Dx = 0, Dy = 0, Dz = 20, Dc=0;
+        public int Nx  = 0, Ny = 0, Nz = 20;
 
 
 

@@ -36,12 +36,14 @@ MyClient.SetAxisMapping( Direction.Forward, ...
     Direction.Up );    % Z-up
 
 %% While loop, stop with ctrl + c
-n=1; p=1; i=1;
+n=2; p=1; i=1;
 c=fread(t);
 %pause(8)
 start=tic;
-A= zeros(1,4); F(1)=0;
+A(1,(1:4))= zeros(1,4); A(2,(1:4))= zeros(1,4);
+F(1)=0;
 while 1
+    
     if MyClient.GetFrame().Result.Value == Result.Success
         Output_GetFrameNumber = MyClient.GetFrameNumber();
         Output_GetTimecode = MyClient.GetTimecode();
@@ -58,40 +60,41 @@ while 1
         ATT(:,i)=AT.Rotation;
         
     end
-    
+    A(n,(1:3))=A(n-1,(1:3));
     p=1;
-    while p<20
-        try
-        B=fscanf(t,'%c');        
-        if B(1) == 'x'
-            B=fscanf(t,'%c');
-            A(n,1)=1*str2double(B);
-        elseif B(1) == 'y'
-            B=fscanf(t,'%c');
-            A(n,2)=1*str2double(B);
-        elseif B(1) == 'z'
-            B=fscanf(t,'%c');
-            A(n,3)=1*str2double(B);
-            A(n,4)=toc(start);
-            start=tic;
-            F(n)=0;
-            p=40;
+    if t.BytesAvailable > 0
+        while p<20
+            try
+                B=fscanf(t,'%c');
+                if B(1) == 'x'
+                    B=fscanf(t,'%c');
+                    A(n,1)=1*str2double(B);
+                elseif B(1) == 'y'
+                    B=fscanf(t,'%c');
+                    A(n,2)=1*str2double(B);
+                elseif B(1) == 'z'
+                    B=fscanf(t,'%c');
+                    A(n,3)=1*str2double(B);
+                    F(n)=0;
+                    p=40;
+                    
+                elseif B(1) == 'F'
+                    F(n)=1;
+                    p=40;
+                end
+            catch me
+                disp('derp')
+                p=40;
+            end
             
-        elseif B(1) == 'F'
-            F(n)=1;
-            p=30;
-            A(n,(1:3))=A(n-1,(1:3));
         end
-        catch me
-            disp('derp')
-            p=30;
-        end
-        
     end
     %A(n,3)=A(n,3);%+983; % calbration of z in got
     Mes=[A(n,(1:3)), pos(1,i),pos(2,i),pos(3,i),ATT(1,i),ATT(2,i),ATT(3,i),ATT(4,i)];
-    if p == 40
+    A(n,4)=toc(start);
+    if A(n,4) > 0.045
         fwrite(u,Mes,'double')
+        start=tic;
     end
     n=n+1;
     i=i+1;
